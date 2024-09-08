@@ -1,0 +1,21 @@
+{% extends '/owner/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1 class="profile-title">Profile</h1>
+    {% for existing_user in existing_user %}
+    <div class="profile-card">
+        <div class="profile-info">
+            <span class="profile-label">Name:</span> {{ existing_user[0] }}<br>
+            <span class="profile-label">City:</span> {{ existing_user[1] }}<br>
+            <span class="profile-label">Location:</span> {{ existing_user[2] }}<br>
+            <span class="profile-label">Full Address:</span> {{ existing_user[3] }}<br>
+            <span class="profile-label">Phone:</span> {{ existing_user[4] }}<br>
+            <span class="profile-label">Email:</span> {{ existing_user[5] }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
