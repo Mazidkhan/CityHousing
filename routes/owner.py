@@ -10,6 +10,7 @@ def connect_db():
 def register():
     if request.method == 'POST':
         session['name'] = request.form['name']
+        session['phone'] = request.form['phone']
         city = request.form['city']
         location = request.form['location']
         address = request.form['address']
@@ -30,17 +31,20 @@ def register():
 @register_bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
-        session['name'] = request.form['username']
-        session['password'] = request.form['password']
         conn = connect_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM owner WHERE name = ? AND password = ?", (session['name'], session['password']))
+        name = request.form['username']
+        password = request.form['password']
+        cursor.execute("SELECT * FROM owner WHERE name = ? AND password = ?", (name, password))
         existing_user = cursor.fetchone()
 
         conn.commit()
         conn.close()
 
         if existing_user:
+            session['name'] = name
+            session['password'] = password
+            session['phone'] = existing_user[4]
             return render_template('/owner/base.html')
 
 @register_bp.route('/profile')
@@ -80,8 +84,8 @@ def flats():
         conn = connect_db()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO flats (city, location, full_address, status, price, image1, image2, image3, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (city, location, address, status, price, image1_filename, image2_filename, image3_filename, description)
+            "INSERT INTO flats (city, location, full_address, status, price, image1, image2, image3, description, owner, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (city, location, address, status, price, image1_filename, image2_filename, image3_filename, description, session['name'], session['phone'])
         )
         conn.commit()
         conn.close()
