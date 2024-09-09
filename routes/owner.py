@@ -1,5 +1,5 @@
-from flask import Blueprint, request, redirect, url_for, render_template, session
-import sqlite3,os,base64
+from flask import Blueprint, request, redirect, url_for, render_template, session, flash, jsonify
+import sqlite3
 
 register_bp = Blueprint('register_bp', __name__)
 
@@ -52,99 +52,109 @@ def profile():
     conn.close()
     return render_template('/owner/profile.html',existing_user=existing_user)
 
-@register_bp.route('/flats')
+@register_bp.route('/flats', methods=['GET', 'POST'])
 def flats():
+    if request.method == 'POST':
+        # Handling form submission (POST request)
+        city = request.form['city']
+        location = request.form['location']
+        address = request.form['address']
+        status = request.form['status']
+        price = request.form['price']
+        description = request.form['description']
+        image1 = request.files['image1']
+        image2 = request.files.get('image2')
+        image3 = request.files.get('image3')
+
+        # Save images
+        image1_filename = image1.filename
+        image1.save(f'static/images/{image1_filename}')
+        image2_filename = image2.filename if image2 else None
+        image3_filename = image3.filename if image3 else None
+        if image2:
+            image2.save(f'static/images/{image2_filename}')
+        if image3:
+            image3.save(f'static/images/{image3_filename}')
+
+        # Insert data into the flats table
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO flats (city, location, full_address, status, price, image1, image2, image3, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (city, location, address, status, price, image1_filename, image2_filename, image3_filename, description)
+        )
+        conn.commit()
+        conn.close()
+
+        flash('Flat added successfully!')
+        return redirect(url_for('register_bp.flats'))
+
+    # Handling GET request: retrieve flats data from the database
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM flats')
-    flat_rows = cursor.fetchall()
+    cursor.execute("SELECT * FROM flats")
+    flats_data = cursor.fetchall()
     conn.close()
-    print(f'Flats:{flat_rows}')
-    return render_template('/owner/flats.html', flats=flat_rows)
 
+    # Pass flats data to the template, or a message if no data exists
+    if flats_data:
+        return render_template('/owner/flats.html', flats=flats_data)
+    else:
+        flash('No flats added.')
+        return render_template('/owner/flats.html', flats=None)
 
-def save_file(file, folder):
-    if file:
-        filename = file.filename
-        file_path = os.path.join(folder, filename)
-        file.save(file_path)
-        return filename
-    return None
+@register_bp.route('/flats/<int:flat_id>', methods=['PUT'])
+def update_flat(flat_id):
+    # Get data from request
+    city = request.form.get('city')
+    location = request.form.get('location')
+    address = request.form.get('address')
+    status = request.form.get('status')
+    price = request.form.get('price')
+    description = request.form.get('description')
 
-@register_bp.route('/flats/add', methods=['POST'])
-def add_flat():
+    # Optionally handle image files if they are being updated
+    image1 = request.files.get('image1')
+    image2 = request.files.get('image2')
+    image3 = request.files.get('image3')
+
+    # Save images if provided
+    if image1:
+        image1_filename = image1.filename
+        image1.save(f'static/images/{image1_filename}')
+    if image2:
+        image2_filename = image2.filename
+        image2.save(f'static/images/{image2_filename}')
+    if image3:
+        image3_filename = image3.filename
+        image3.save(f'static/images/{image3_filename}')
+
+    # Update data in the flats table
     conn = connect_db()
     cursor = conn.cursor()
-
-    city = request.form['city']
-    location = request.form['location']
-    fulladdress = request.form['fulladdress']
-    status = request.form['status']
-    price = request.form['price']
-    video_file = request.files.get('video')
-    image1_file = request.files.get('image1')
-    image2_file = request.files.get('image2')
-    image3_file = request.files.get('image3')
-    description = request.form['description']
-
-    # Define upload folders
-    video_folder = 'static/videos/'
-    image_folder = 'static/images/'
-
-    # Save files
-    video_filename = save_file(video_file, video_folder)
-    image1_filename = save_file(image1_file, image_folder)
-    image2_filename = save_file(image2_file, image_folder)
-    image3_filename = save_file(image3_file, image_folder)
-
-    # Insert into database
-    cursor.execute('''
-        INSERT INTO flats (city, location, full_address, status, price, video, image1, image2, image3, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (city, location, fulladdress, status, price, video_filename, image1_filename, image2_filename, image3_filename, description))
-
+    cursor.execute("""
+        UPDATE flats 
+        SET city = ?, location = ?, full_address = ?, status = ?, price = ?, image1 = ?, image2 = ?, image3 = ?, description = ? 
+        WHERE id = ?
+    """, (city, location, address, status, price, 
+          image1_filename if image1 else None, 
+          image2_filename if image2 else None, 
+          image3_filename if image3 else None, 
+          description, flat_id))
     conn.commit()
     conn.close()
 
-    return redirect(url_for('register_bp.flats'))
+    return jsonify({'message': 'Flat updated successfully!'})
 
-@register_bp.route('/flats/edit', methods=['POST'])
-def edit_flat():
+@register_bp.route('/flats/<int:flat_id>', methods=['DELETE'])
+def delete_flat(flat_id):
     conn = connect_db()
     cursor = conn.cursor()
-
-    city = request.form['city']
-    location = request.form['location']
-    fulladdress = request.form['fulladdress']
-    status = request.form['status']
-    price = request.form['price']
-    video_file = request.files.get('video')
-    image1_file = request.files.get('image1')
-    image2_file = request.files.get('image2')
-    image3_file = request.files.get('image3')
-    description = request.form['description']
-
-    # Define upload folders
-    video_folder = 'static/videos/'
-    image_folder = 'static/images/'
-
-    # Save files
-    video_filename = save_file(video_file, video_folder)
-    image1_filename = save_file(image1_file, image_folder)
-    image2_filename = save_file(image2_file, image_folder)
-    image3_filename = save_file(image3_file, image_folder)
-
-    # Insert into database
-    cursor.execute('''
-        INSERT INTO flats (city, location, full_address, status, price, video, image1, image2, image3, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (city, location, fulladdress, status, price, video_filename, image1_filename, image2_filename, image3_filename, description))
-
+    cursor.execute("DELETE FROM flats WHERE id = ?", (flat_id,))
     conn.commit()
     conn.close()
 
-    return redirect(url_for('register_bp.flats'))
-
+    return jsonify({'message': 'Flat deleted successfully!'})
 
 @register_bp.route('/bungalows')
 def bungalows():

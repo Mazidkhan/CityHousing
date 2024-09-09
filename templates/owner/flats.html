@@ -6,4 +6,211 @@
     <h1>Flats</h1>
     <p>Here you can add Flats for sale or rent.</p>
 
+    <!-- Button to Open the Add Flat Modal -->
+    <button type="button" id="addFlatBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFlatModal">
+        Add Flat
+    </button>
+
+    <!-- Check if flats data exists -->
+    {% if flats %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>City</th>
+                <th>Location</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Images</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flat in flats %}
+            <tr>
+                <td data-label="ID">{{ flat[0] }}</td>
+                <td data-label="City">{{ flat[1] }}</td>
+                <td data-label="Location">{{ flat[2] }}</td>
+                <td data-label="Address">{{ flat[3] }}</td>
+                <td data-label="Status">{{ flat[4] }}</td>
+                <td data-label="Price">{{ flat[5] }}</td>
+                <td data-label="Description">{{ flat[9] }}</td>
+                <td data-label="Images">
+                    <button class="btn btn-info" onclick="showImagesModal('{{ flat[0] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}')">View Images</button>
+                </td>
+                <td data-label="Actions">
+                    <button class="btn btn-warning" onclick="openEditModal('{{ flat[0] }}', '{{ flat[1] }}', '{{ flat[2] }}', '{{ flat[3] }}', '{{ flat[4] }}', '{{ flat[5] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}', '{{ flat[9] }}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteFlat('{{ flat[0] }}')">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flats added yet.</p>
+    {% endif %}
+
+    <!-- Add Flat Modal -->
+    <div class="modal fade" id="addFlatModal" tabindex="-1" aria-labelledby="addFlatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFlatModalLabel">Add New Flat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addFlatForm" enctype="multipart/form-data" method="post" action="/flats">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location" name="location" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-control" id="status" name="status" required>
+                                        <option value="rent">Rent</option>
+                                        <option value="sale">Sale</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label" id="priceLabel">Price</label>
+                                    <input type="number" class="form-control" id="price" name="price" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="image1" class="form-label">Image 1</label>
+                                    <input type="file" class="form-control" id="image1" name="image1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image2" class="form-label">Image 2</label>
+                                    <input type="file" class="form-control" id="image2" name="image2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image3" class="form-label">Image 3</label>
+                                    <input type="file" class="form-control" id="image3" name="image3">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addFlatForm" class="btn btn-primary">Save Flat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Flat Modal -->
+    <div class="modal fade" id="editFlatModal" tabindex="-1" aria-labelledby="editFlatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFlatModalLabel">Edit Flat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editFlatForm" enctype="multipart/form-data">
+                        <input type="hidden" id="editFlatId" name="id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editCity" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="editCity" name="city" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editLocation" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="editLocation" name="location" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editAddress" class="form-label">Address</label>
+                                    <textarea class="form-control" id="editAddress" name="address" rows="2" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStatus" class="form-label">Status</label>
+                                    <select class="form-control" id="editStatus" name="status" required>
+                                        <option value="rent">Rent</option>
+                                        <option value="sale">Sale</option>
+                                        <option value="sold">Sold out</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPrice" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="editPrice" name="price" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editImage1" class="form-label">Image 1</label>
+                                    <input type="file" class="form-control" id="editImage1" name="image1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editImage2" class="form-label">Image 2</label>
+                                    <input type="file" class="form-control" id="editImage2" name="image2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editImage3" class="form-label">Image 3</label>
+                                    <input type="file" class="form-control" id="editImage3" name="image3">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="editDescription" name="description" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateFlat()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Flat Images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Image Carousel -->
+                    <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="carouselImages">
+                            <!-- Images will be inserted dynamically here -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

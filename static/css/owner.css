@@ -126,3 +126,97 @@
         background-color: #f1f1f1;
         transition: background-color 0.3s;
     }
+    .modal-body {
+        max-height: 70vh;  /* Limit the modal body height */
+        overflow-y: auto;  /* Enable scrolling if content exceeds max height */
+    }
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+}
+
+table thead tr {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+}
+
+table th, table td {
+    padding: 12px 15px;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+table tbody tr td button {
+    background-color: #3498db;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table tbody tr td button:hover {
+    background-color: #2980b9;
+}
+
+table tbody tr td {
+    vertical-align: middle;
+}
+
+.alert {
+    margin-bottom: 15px;
+    padding: 15px;
+    color: white;
+    background-color: #3498db;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Ensure modal body does not overflow */
+.modal-body {
+    overflow: hidden;
+}
+
+/* Ensure the modal content is centered */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure the carousel images fit within the modal */
+.carousel-inner img {
+    width: 30%; /* Ensure the image covers the full width of the carousel */
+    max-height: 80vh; /* Adjust the maximum height relative to the viewport height */
+}
+
+/* Style the carousel controls */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Circular buttons */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: white; /* White icons for visibility */
+    border-radius: 50%; /* Circular icons */
+}
