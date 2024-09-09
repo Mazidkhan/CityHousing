@@ -5,4 +5,25 @@
 {% block content %}
     <h1>Find Space</h1>
     <p>Here you can find available spaces.</p>
+
+    <div class="container">
+        <div class="row">
+            {% for flat in flats %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='images/' + flat[6]) }}" class="card-img-top" alt="Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ flat.city }}, {{ flat.location }}</h5>
+                            <p class="card-text">{{ flat.description }}</p>
+                            <p class="card-text"><strong>Price:</strong> ${{ flat.price }}</p>
+                            <p class="card-text"><strong>Owner:</strong> {{ flat.owner }}</p>
+                            <p class="card-text"><strong>Phone:</strong> {{ flat.phone }}</p>
+                            <a href="#" class="btn btn-primary">More Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
 {% endblock %}
