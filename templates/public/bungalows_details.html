@@ -1,0 +1,58 @@
+{% extends '/public/base.html' %}
+
+{% block title %}Flat Details{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/public/bungalowdetails.css') }}">
+    
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left column for images -->
+        <div class="col-md-4">
+            <div id="carouselExampleIndicators" class="carousel slide mb-3">
+                <div class="carousel-inner">
+                    <!-- Main images carousel -->
+                    {% for image in images %}
+                    {% if image %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='images/' + image) }}" class="d-block w-100" alt="Image">
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <div class="thumbnail-container">
+                <!-- Thumbnails -->
+                <div class="d-flex flex-wrap">
+                    {% for image in images %}
+                    {% if image %}
+                    <img src="{{ url_for('static', filename='images/' + image) }}" class="img-thumbnail me-2 mb-2" style="cursor: pointer; width: 100px; height: auto;" alt="Thumbnail">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right column for flat details -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="card-text">{{ flat[9]}}</p>
+                    <p class="card-text"><strong>Price:</strong> Rs.{{ flat[5] }}</p>
+                    <p class="card-text"><strong>Owner:</strong> {{ flat[10] }}</p>
+                    <p class="card-text"><strong>Phone:</strong> {{ flat[11] }}</p>
+                    <p class="card-text"><strong>Address:</strong> {{ flat[3] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

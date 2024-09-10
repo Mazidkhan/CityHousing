@@ -13,41 +13,43 @@
 
     <!-- Check if flats data exists -->
     {% if flats %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>City</th>
-                <th>Location</th>
-                <th>Address</th>
-                <th>Status</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Images</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for flat in flats %}
-            <tr>
-                <td data-label="ID">{{ flat[0] }}</td>
-                <td data-label="City">{{ flat[1] }}</td>
-                <td data-label="Location">{{ flat[2] }}</td>
-                <td data-label="Address">{{ flat[3] }}</td>
-                <td data-label="Status">{{ flat[4] }}</td>
-                <td data-label="Price">{{ flat[5] }}</td>
-                <td data-label="Description">{{ flat[9] }}</td>
-                <td data-label="Images">
-                    <button class="btn btn-info" onclick="showImagesModal('{{ flat[0] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}')">View Images</button>
-                </td>
-                <td data-label="Actions">
-                    <button class="btn btn-warning" onclick="openEditModal('{{ flat[0] }}', '{{ flat[1] }}', '{{ flat[2] }}', '{{ flat[3] }}', '{{ flat[4] }}', '{{ flat[5] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}', '{{ flat[9] }}')">Edit</button>
-                    <button class="btn btn-danger" onclick="deleteFlat('{{ flat[0] }}')">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-container" style="height: 400px; overflow-y: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>City</th>
+                    <th>Location</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Images</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flat in flats %}
+                <tr>
+                    <td data-label="ID">{{ flat[0] }}</td>
+                    <td data-label="City">{{ flat[1] }}</td>
+                    <td data-label="Location">{{ flat[2] }}</td>
+                    <td data-label="Address">{{ flat[3] }}</td>
+                    <td data-label="Status">{{ flat[4] }}</td>
+                    <td data-label="Price">{{ flat[5] }}</td>
+                    <td data-label="Description">{{ flat[9] }}</td>
+                    <td data-label="Images">
+                        <button class="btn btn-info" onclick="showImagesModal('{{ flat[0] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}')">View Images</button>
+                    </td>
+                    <td data-label="Actions">
+                        <button class="btn btn-warning" onclick="openEditModal('{{ flat[0] }}', '{{ flat[1] }}', '{{ flat[2] }}', '{{ flat[3] }}', '{{ flat[4] }}', '{{ flat[5] }}', '{{ flat[6] }}', '{{ flat[7] }}', '{{ flat[8] }}', '{{ flat[9] }}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteFlat('{{ flat[0] }}')">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p>No flats added yet.</p>
     {% endif %}
@@ -61,7 +63,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addFlatForm" enctype="multipart/form-data" method="post" action="/flats">
+                    <form id="addFlatForm" enctype="multipart/form-data" method="post" action="/owner/flats">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">

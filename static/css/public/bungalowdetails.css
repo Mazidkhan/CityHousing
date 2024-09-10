@@ -1,0 +1,14 @@
+.carousel-inner img {
+    max-height: 400px; /* Adjust based on your preference */
+    object-fit: cover;
+}
+
+.thumbnail-container {
+    position: sticky;
+    top: 10px; /* Adjust if needed */
+    padding-top: 0px;
+}
+
+.thumbnail-container img {
+    margin-right: 0px; /* Space between thumbnails */
+}
