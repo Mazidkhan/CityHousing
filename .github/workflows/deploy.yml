@@ -18,6 +18,7 @@ jobs:
           echo "${{ secrets.CITYSPACE_PEM_KEY }}" > CitySpace_key.pem
           chmod 600 CitySpace_key.pem
 
+
       - name: Add remote server to known hosts
         run: |
           ssh-keyscan -H 4.186.60.255 >> ~/.ssh/known_hosts
