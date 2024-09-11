@@ -3,29 +3,25 @@ name: Deploy
 on:
   push:
     branches:
-      - main  # Adjust as needed
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Create PEM file from secret
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.6.0
+        with:
+          ssh-private-key: ${{ secrets.CITYSPACE_PEM_KEY }}
+
+      - name: Add known hosts
         run: |
-          echo "${{ secrets.CITYSPACE_PEM_KEY }}" > CitySpace_key.pem
-          chmod 600 CitySpace_key.pem
+          ssh-keyscan 4.186.60.255 >> ~/.ssh/known_hosts
 
-
-      - name: Add remote server to known hosts
+      - name: Copy files using SCP
         run: |
-          ssh-keyscan -H 4.186.60.255 >> ~/.ssh/known_hosts
-
-      - name: Deploy files to server
-        run: |
-          scp -i CitySpace_key.pem -r * azureuser@4.186.60.255:CityHousing
-
-      - name: Clean up PEM file
-        run: rm CitySpace_key.pem
+          scp -o StrictHostKeyChecking=no -r * azureuser@4.186.60.255:CityHousing
