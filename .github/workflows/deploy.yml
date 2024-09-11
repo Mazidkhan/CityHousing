@@ -25,3 +25,4 @@ jobs:
       - name: Copy files using SCP
         run: |
           scp -o StrictHostKeyChecking=no -r * azureuser@4.186.60.255:CityHousing
+
