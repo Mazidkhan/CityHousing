@@ -1,2 +1,2 @@
 command for azure deployment
-scp -i keys/CitySpace_key.pem  -r CityHousing/* azureuser@20.244.90.206:CityHousing
+scp -i CitySpace_key.pem  -r * azureuser@4.186.60.255:CityHousing
