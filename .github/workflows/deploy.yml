@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main  # Adjust as needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create PEM file from secret
+        run: |
+          echo "${{ secrets.CITYSPACE_PEM_KEY }}" > CitySpace_key.pem
+          chmod 600 CitySpace_key.pem
+
+      - name: Deploy files to server
+        run: |
+          scp -i CitySpace_key.pem -r * azureuser@4.186.60.255:CityHousing
+
+      - name: Clean up PEM file
+        run: rm CitySpace_key.pem
