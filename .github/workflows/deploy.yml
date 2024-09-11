@@ -15,12 +15,16 @@ jobs:
 
       - name: Create PEM file from secret
         run: |
-          echo "${{ secrets.CITYSPACE_PEM_KEY }}" > CitySpace.pem
-          chmod 600 CitySpace.pem
+          echo "${{ secrets.CITYSPACE_PEM_KEY }}" > CitySpace_key.pem
+          chmod 600 CitySpace_key.pem
+
+      - name: Add remote server to known hosts
+        run: |
+          ssh-keyscan -H 4.186.60.255 >> ~/.ssh/known_hosts
 
       - name: Deploy files to server
         run: |
-          scp -i CitySpace.pem -r * azureuser@4.186.60.255:CityHousing
+          scp -i CitySpace_key.pem -r * azureuser@4.186.60.255:CityHousing
 
       - name: Clean up PEM file
-        run: rm CitySpace.pem
+        run: rm CitySpace_key.pem
